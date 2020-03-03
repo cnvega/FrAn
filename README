@@ -1,0 +1,56 @@
+##################################################################
+#                                                                #
+#            FrAn - Fractal Analyzer software                    #
+#                                                                #
+##################################################################
+
+AUTHOR
+  Cristian A. Vega Martinez <cnvega(at)gmail.com>
+
+
+COPYRIGHT
+  Copyright © 2017-2020 Cristian A. Vega M.
+
+  This collection of scripts are provided as it is, without any warranty. 
+  All this content is distributed directly by the author under the 
+  GNU-GPL (version 3) public licence. Please read the LICENCE file for
+  more details.
+
+
+IMPORTANT NOTES
+
+- This package is outdated and it needs revision! 
+  You are welcome to contribute with the development, improvement and/or
+  documenting any part of it!
+
+- If you use this package or any derivate product of it for scientific
+  purposes, please contribute us by citing the corresponding paper:
+
+     Azua-Bustos, A., & Vega-Martinez, C. (2013). 
+     International Journal of Astrobiology, 12(4), 314-320. 
+     doi:10.1017/S1473550413000177
+
+- New ideas and collaboration are also welcome! Do not hesitate in 
+  contacting us!
+
+
+DEPENDENCES
+  This software is written in Python, and requires the following modules:
+    - PIL, the Python Image Library to do all the image operations.
+    - Pyx, to create the plots in PostScript format.
+
+
+LIMITATIONS
+  This software only can process RGB images in which each color channel 
+  can be transformed to a 0-255 integer value. A conversion to greyscale
+  is necessary to apply the box counting method, and to do this the PIL
+  algorithms are applied. 
+
+
+TODO
+  - Improve the computing time.
+  - Add compatibility to FITS images (having counts in pixels instead 
+    of colors)
+  - Change PYX plots to matplotlib
+  - Add multithreading support and/or MPI.
+
