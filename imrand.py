@@ -83,7 +83,7 @@ def randomizar(option, infile, maxPercent, delta):
     else: 
         loops = int(loops)
 
-    print("deltaPix = "+str(deltaPix))
+    print(("deltaPix = "+str(deltaPix)))
     if option == '-p':
         for i in range(loops):
             totalPer = int((i+1.)*100./loops)

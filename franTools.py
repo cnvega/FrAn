@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # coding: utf-8
 
 ## @file franTools.py
@@ -8,9 +8,9 @@
 ## @brief Fractal Analyzer Toolkit
 ##
 ##  This is the toolkit of FrAn - Fractal Analyzer software.
-## These functions can take an image independently of the file type and apply 
-## a filter to convert it from RGB to greyscale according to a given threshold. 
-## Then, using the box counting method, the Fractal Dimension or the Fractal 
+## These functions can take an image independently of the file type and apply
+## a filter to convert it from RGB to greyscale according to a given threshold.
+## Then, using the box counting method, the Fractal Dimension or the Fractal
 ## Spectrum can be obtained depending on the given option.
 
 import sys
@@ -23,7 +23,7 @@ import copy
 #psyco.full()
 
 
-def thresholding(imageIn,cut): 
+def thresholding(imageIn,cut):
     """Applies threshold filter to 2D gray image using cut value."""
     result = imageIn.copy()
     result = result.point(lambda i: 255)
@@ -41,7 +41,7 @@ def boxCounting2(imageIn, boxSize):
     boxlist = []
     addbox = boxlist.append
     coords = [0,0,0,0,0,0,0,0]
-    x0,y0,x1,y1,x2,y2,x3,y3 = 0,1,2,3,4,5,6,7    
+    x0,y0,x1,y1,x2,y2,x3,y3 = 0,1,2,3,4,5,6,7
     for ix in range(nx):
         for iy in range(ny):
             coords[x0] = coords[x1] = boxSize*ix
@@ -61,7 +61,7 @@ def boxCounting2(imageIn, boxSize):
     return whites, blacks, both, nx*ny
 
 
-def boxCounting(imageIn, boxSize): 
+def boxCounting(imageIn, boxSize):
     """ Returns a tuple with the results of the box counting method using
     boxSize as size of each box. (whites, blacks, both, N)"""
     # Box shape:
@@ -75,7 +75,7 @@ def boxCounting(imageIn, boxSize):
     nx = int(imageIn.size[0]/boxSize)
     ny = int(imageIn.size[1]/boxSize)
     coords = [0,0,0,0,0,0,0,0]
-    x0,y0,x1,y1,x2,y2,x3,y3 = 0,1,2,3,4,5,6,7    
+    x0,y0,x1,y1,x2,y2,x3,y3 = 0,1,2,3,4,5,6,7
     for ix in range(nx):
         for iy in range(ny):
             coords[x0] = coords[x1] = boxSize*ix
@@ -139,12 +139,12 @@ def linFit(xvec, yvec): # Make a linear fit of the points (x,y)
     aux = 0.0
     for i in range(len(xvec)):
         aux += (yvec[i] - (m*xvec[i] + n))**2.0
-    
+
     sigma = aux/(total-2.0)
     dm = (sigma*total/delta)**0.5
     dn = (sigma*sumxx/delta)**0.5
 
-    return m,n,dm,dn    
+    return m,n,dm,dn
 
 
 def unique(thelist):
@@ -156,14 +156,14 @@ def imageProp(imageName):
     """Shows image properties"""
     originalImage = Image.open(imageName)
     print("Original Image Properties:")
-    print("Image name: "+str(imageName))
-    print("Image type: "+str(originalImage.mode))
-    print("Image size: "+str(originalImage.size))
+    print(("Image name: "+str(imageName)))
+    print(("Image type: "+str(originalImage.mode)))
+    print(("Image size: "+str(originalImage.size)))
     grayImage = originalImage.convert("L")
     average = pixelAverage(grayImage)
     desvest = int(pixelDesvest(grayImage))
     print("Grayscale Image Stats:")
-    print("  mean:  "+str(average)+"\n  sigma: "+str(desvest))
+    print(("  mean:  "+str(average)+"\n  sigma: "+str(desvest)))
     return 0
 
 
@@ -174,7 +174,7 @@ def fracDim(imageIn, thres):
         print("Applying grayscale filter...")
         imageIn = imageIn.convert("L")
 
-    print("Applying Thresholding ["+str(thres)+"]")
+    print(("Applying Thresholding ["+str(thres)+"]"))
     bwImage = thresholding(imageIn, thres)
     wholeHistogram = bwImage.histogram()
     if wholeHistogram[0] == 0 or wholeHistogram[255] == 0:
@@ -185,7 +185,7 @@ def fracDim(imageIn, thres):
     maxStep = int(0.3*area)    # 30%
     if minStep < 2:
         minStep = 2
-    
+
     print("Generating size boxes vector")
     allData, result = [], []
     lnr, lnBW, lnWBW, lnBBW = [], [], [], []
@@ -195,7 +195,7 @@ def fracDim(imageIn, thres):
     boxesVect = list(range(numSteps))
     for i in range(numSteps):
         boxesVect[i] = int(round(1.0/exp(lnMinStep+i*lnStepSize)))
-    
+
     boxesVect = unique(boxesVect)
     boxesVect.sort()
     print(boxesVect)
@@ -231,14 +231,14 @@ def fran(imageName, option): ### Main of the script
     print("FrAn - Fractal Analyzer Software")
     print("Loading image...")
     originalImage = Image.open(imageName) # image load
-    print("Image type: "+str(originalImage.mode))
-    print("Image size: "+str(originalImage.size))
+    print(("Image type: "+str(originalImage.mode)))
+    print(("Image size: "+str(originalImage.size)))
     print("Applying greyscale filter...")
     grayImage = originalImage.convert("L")
     average = pixelAverage(grayImage)
     desvest = int(pixelDesvest(grayImage))
     print("Image Stats:")
-    print("  Mean:  "+str(average)+"\n  sigma: "+str(desvest))
+    print(("  Mean:  "+str(average)+"\n  sigma: "+str(desvest)))
     text.set(lfs="foils17pt")
     # Using -fd or -t option (fractal dimension at fixed threshold):
     if option != "fs":
@@ -260,7 +260,7 @@ def fran(imageName, option): ### Main of the script
         thresImage.save(imageName+"_t"+str(thr)+".png", "PNG")
         datafile = open(outName+".dat","w")
         # file header: results
-        datafile.write("# Image Name   = "+str(imageName)+"\n") 
+        datafile.write("# Image Name   = "+str(imageName)+"\n")
         datafile.write("# Threshold    = "+str(thr)+"\n#\n")
         for element in fractal:
             datafile.write("# D_"+element[0]+" = "+str(element[1]))
@@ -275,7 +275,7 @@ def fran(imageName, option): ### Main of the script
             datafile.write("\n")
         # closing file
         datafile.close()
-        # graphic: Data and linear fits in an EPS file.    
+        # graphic: Data and linear fits in an EPS file.
         graphic=graph.graphxy(width=16,x=graph.axis.linear(title="ln(1/r)"),
             y=graph.axis.linear(title="ln(N)"), key=graph.key.key(pos="br",dist=0.1))
         graphic.plot([graph.data.file(outName+".dat", x=6, y=7, title="BW data"),
@@ -308,8 +308,8 @@ def fran(imageName, option): ### Main of the script
             dev[i] = -rango+i*2*rango/(specPoints-1.0)
             thresVect[i] = int(round(average + desvest*dev[i]))
             print("--------------------------------------")
-            print("%%% Fractal Dimension with threshold: "+str(thresVect[i]))
-            fractal, data = fracDim(grayImage, thresVect[i])  # Fractal analysis 
+            print(("%%% Fractal Dimension with threshold: "+str(thresVect[i])))
+            fractal, data = fracDim(grayImage, thresVect[i])  # Fractal analysis
             if fractal != 0 and fractal != -1:
                 aux = (thresVect[i], dev[i])
                 spectrum.append(aux+fractal[0][1:]+fractal[1][1:]+fractal[2][1:])
@@ -335,31 +335,31 @@ def fran(imageName, option): ### Main of the script
         # closing file
         datafile.close()
         # Graphic: BW, W-BW and B-BW fractal spectrums in the same graphic.
-        graphic = graph.graphxy(width=16, 
+        graphic = graph.graphxy(width=16,
             x=graph.axis.linear(title="Relative threshold value"),
             y=graph.axis.linear(title="Fractal Dimension"),
             key=graph.key.key(pos="br",dist=0.1))
         graphic.plot(graph.data.file(outName+".dat",x=2,y=3,dy=5,title="BW"),
-            [graph.style.symbol(symbol=graph.style.symbol.square, size=0.3, 
-            symbolattrs=[deco.filled([color.rgb.green])]), 
+            [graph.style.symbol(symbol=graph.style.symbol.square, size=0.3,
+            symbolattrs=[deco.filled([color.rgb.green])]),
             graph.style.errorbar(size=0, errorbarattrs=[style.linewidth.thin])])
         graphic.plot(graph.data.file(outName+".dat", x=2, y=7, dy=9, title="W+BW"),
-            [graph.style.symbol(symbol=graph.style.symbol.triangle, size=0.24, 
-            symbolattrs=[deco.filled([color.rgb.red])]), 
+            [graph.style.symbol(symbol=graph.style.symbol.triangle, size=0.24,
+            symbolattrs=[deco.filled([color.rgb.red])]),
             graph.style.errorbar(size=0, errorbarattrs=[style.linewidth.thin])])
         graphic.plot(graph.data.file(outName+".dat", x=2, y=11, dy=13, title="B+BW"),
-            [graph.style.symbol(symbol=graph.style.symbol.diamond, size=0.24, 
-            symbolattrs=[deco.filled([color.rgb.blue])]), 
+            [graph.style.symbol(symbol=graph.style.symbol.diamond, size=0.24,
+            symbolattrs=[deco.filled([color.rgb.blue])]),
             graph.style.errorbar(size=0, errorbarattrs=[style.linewidth.thin])])
         graphic.writeEPSfile(outName)
         graphic.writePDFfile(outName)
 
     print("Done!")
-    
+
 if __name__ == "__main__":
     if len(sys.argv) != 1:
-        option = sys.argv[1] 
-    else: 
+        option = sys.argv[1]
+    else:
         option = ''
     if option == '-fd' or option == '-d' or option == 'fd':
         fran(sys.argv[2],"fd")
@@ -384,4 +384,3 @@ OPTIONS:
 
 -p          Shows image properties only.
         """)
-
