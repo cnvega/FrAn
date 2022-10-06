@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # coding: utf-8
 
 ## @file fran.py
@@ -6,22 +6,28 @@
 ## @copyright Copyright © 2017 Cristian A. Vega M.
 ##
 ## @brief Fractal class
-## 
+##
 ## FrAn - Fractal Analyzer software.
-## The fractal class allows to load an RBG image and can calculate its fractal spectrum, 
+## The fractal class allows to load an RBG image and can calculate its fractal spectrum,
 ## the null model (randomizing the image) and the corresponding fractal excess.
 
 import sys
 import os
+
+# os.chdir('/Users/jbrooke/Documents/projects/FrAn')
+
+
 from PIL import Image
-from pyx import * # plots
+from pyx import *
 #import psyco
 import franTools
 import imrand
 #from readcol import *
+#import matplotlib.pyplot as graph
+
 
 #psyco.full()
-text.set(lfs="foils17pt")
+# text.set(lfs="foils17pt")
 
 class Fractal:
     """A Fractal Image"""
@@ -36,7 +42,7 @@ class Fractal:
         self.spectrum = None
         self.nullSpectrum = None
         self.excess = None
-    
+
     def __set_atr(self):
         if self.origImage != None:
             self.grayImage = self.origImage.convert("L")
@@ -44,14 +50,14 @@ class Fractal:
             self.desvest = int(franTools.pixelDesvest(self.grayImage))
 
     def load(self, filename):
-        try: 
+        try:
             self.origImage = Image.open(filename)
         except IOError:
             print("Cannot load image file")
             return
         self.filename = filename
         self.__set_atr()
-    
+
     def loadImage(self, imagein):
         self.origImage = imagein
         self.__set_atr()
@@ -67,7 +73,7 @@ class Fractal:
             print("Division by zero!")
             return 0, 0
         for element in result:
-            print("D_"+element[0]+" = "+str(element[1])+"\t\terr = "+str(element[3]))
+            print(("D_"+element[0]+" = "+str(element[1])+"\t\terr = "+str(element[3])))
         return result[0][1], result[0][3]
 
     def fractalSpectra(self, specPoints = 31):
@@ -86,7 +92,7 @@ class Fractal:
             dev[i] = -rango+i*2*rango/(specPoints-1.0)
             thresVect[i] = int(round(self.average + self.desvest*dev[i]))
             print("--------------------------------------")
-            print("%%% Fractal Dimension with threshold: "+str(thresVect[i]))
+            print(("%%% Fractal Dimension with threshold: "+str(thresVect[i])))
             auxFD, auxFDerr = self.fractalDimension(thresVect[i])
             if auxFD != 0:
                 spec.append(auxFD)
@@ -94,10 +100,10 @@ class Fractal:
             else:
                 spec.append(0.)
                 specerr.append(0.)
-            #print(spec) 
+            #print(spec)
         self.spectrum = thresVect, dev, spec, specerr
         return thresVect, dev, spec, specerr
-    
+
     def nullModel(self, randStep = 20):
         # Randomization constants:
         condition = 0.001
@@ -106,7 +112,7 @@ class Fractal:
         loops = maxRandPix*randStep/100.
         if (loops-int(loops)) > 0.: # rounding
             loops = int(loops) + 1
-        else: 
+        else:
             loops = int(loops)
         # First randomization - 100%:
         randImage = self.grayImage.copy()
@@ -149,7 +155,7 @@ class Fractal:
 
         if self.nullSpectrum == None:
             self.nullModel()
-        
+
         self.excess = []
         for i in range(31):
             aux = self.nullSpectrum[2][i] - self.spectrum[2][i]
@@ -162,7 +168,7 @@ class Fractal:
             self.excessSpectra()
 
         mainName = os.path.splitext(self.filename)[0]
-        datafile = open(mainName+".dat","w") 
+        datafile = open(mainName+".dat","w")
         datafile.write("# thres\tdev\tspec\tspec_err\tnullsp\texcess\n")
         for i in range(31):
             for j in range(4):
@@ -173,7 +179,7 @@ class Fractal:
         self.grayImage.save(mainName+"_gray.png","PNG")
         self.nullImage.save(mainName+"_null.png","PNG")
         self.datafilename = mainName+".dat"
-    
+
     def graphExcess(self):
         if self.datafilename == '':
             self.excessSpectra()
@@ -182,7 +188,7 @@ class Fractal:
         mainName = os.path.splitext(self.filename)[0]
         graph1 = graph.graphxy(width=16,
             x=graph.axis.linear(title="Relative threshold value"),
-            y=graph.axis.linear(title="Fractal Excess"))
+            y=graph.axis.linear(min=0, max=1, title="Fractal Excess"))
         graph1.plot(graph.data.file(self.datafilename,x=2,y=6),
             [graph.style.symbol(symbol=graph.style.symbol.triangle,size=0.3,
             symbolattrs=[deco.filled([color.rgb.blue])])])
@@ -206,4 +212,3 @@ if __name__ == "__main__":
     myfractal.excessSpectra()
     myfractal.saveData()
     myfractal.graphExcess()
-
